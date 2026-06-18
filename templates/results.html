@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Results - Student Database Management{% endblock %}
+{% block content %}
+  <div class="card">
+    <h2>Enter or update marks</h2>
+    <form class="grid-form" id="result-form">
+      <label>Student ID
+        <select name="student_id" required>
+          <option value="" disabled selected>Choose a student</option>
+          {% for sid in student_choices %}
+            <option value="{{ sid }}">{{ sid }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Exam ID
+        <select name="exam_id" required>
+          <option value="" disabled selected>Choose an exam</option>
+          {% for eid in exam_choices %}
+            <option value="{{ eid }}">{{ eid }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Subject
+        <input type="text" name="subject" required>
+      </label>
+      <label>Marks (0-100)
+        <input type="number" name="marks" min="0" max="100" step="0.01" required>
+      </label>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-accent" formaction="{{ url_for('enter_result') }}" formmethod="post">Enter marks</button>
+        <button type="submit" class="btn btn-accent" formaction="{{ url_for('update_result') }}" formmethod="post">Update marks</button>
+      </div>
+    </form>
+    <p class="hint">Enter creates a new result or refreshes an existing one for the same student/exam/subject. Update requires that result to already exist.</p>
+  </div>
+
+  <div class="card">
+    <h2>Results</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Student ID</th><th>Exam ID</th><th>Subject</th><th>Marks</th><th>Grade</th></tr></thead>
+        <tbody>
+          {% for result in results.values() %}
+          <tr>
+            <td>{{ result.student_id }}</td>
+            <td>{{ result.exam_id }}</td>
+            <td>{{ result.subject }}</td>
+            <td>{{ "%.2f"|format(result.marks) }}</td>
+            <td>{{ result.grade }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="5" class="empty">No results recorded yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

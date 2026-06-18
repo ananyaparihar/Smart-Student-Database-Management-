@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Students - Student Database Management{% endblock %}
+{% block content %}
+  <div class="card">
+    <h2>Register or update a student</h2>
+    <form class="grid-form" method="post" action="{{ url_for('add_student') }}" id="student-form">
+      <label>Student ID
+        <input type="text" name="student_id" required>
+      </label>
+      <label>Name
+        <input type="text" name="name">
+      </label>
+      <label>Email
+        <input type="email" name="email">
+      </label>
+      <label>Mobile
+        <input type="text" name="mobile">
+      </label>
+      <label>Course
+        <input type="text" name="course">
+      </label>
+      <label>Semester
+        <input type="number" name="semester" min="1" value="1">
+      </label>
+      <label>Section
+        <input type="text" name="section">
+      </label>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-accent">Register student</button>
+        <button type="submit" class="btn btn-accent" formaction="{{ url_for('update_student') }}">Update student</button>
+        <button type="submit" class="btn btn-danger" formaction="{{ url_for('delete_student') }}"
+          onclick="return confirm('Delete this student? This cannot be undone.');">Delete student</button>
+      </div>
+    </form>
+    <p class="hint">Tip: register sets all fields. Update only requires Student ID plus the fields you want to change. Delete only requires Student ID.</p>
+  </div>
+
+  <div class="card">
+    <h2>Students ({{ students|length }})</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Student ID</th><th>Name</th><th>Email</th><th>Course</th><th>Semester</th>
+            <th>Section</th><th>Attendance %</th><th>GPA</th><th>Fee Status</th><th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for student in students %}
+          <tr>
+            <td>{{ student.student_id }}</td>
+            <td>{{ student.name }}</td>
+            <td>{{ student.email }}</td>
+            <td>{{ student.course }}</td>
+            <td>{{ student.semester }}</td>
+            <td>{{ student.section }}</td>
+            <td>{{ "%.2f"|format(student.attendance) }}</td>
+            <td>{{ "%.2f"|format(student.gpa) }}</td>
+            <td>{{ student.fee_status }}</td>
+            <td><button type="button" class="btn btn-outline btn-small" onclick="fillForm(this)"
+              data-id="{{ student.student_id }}" data-name="{{ student.name }}" data-email="{{ student.email }}"
+              data-mobile="{{ student.mobile_number }}" data-course="{{ student.course }}"
+              data-semester="{{ student.semester }}" data-section="{{ student.section }}">Edit</button></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="10" class="empty">No students registered yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    function fillForm(button) {
+      const form = document.getElementById('student-form');
+      form.student_id.value = button.dataset.id;
+      form.name.value = button.dataset.name;
+      form.email.value = button.dataset.email;
+      form.mobile.value = button.dataset.mobile;
+      form.course.value = button.dataset.course;
+      form.semester.value = button.dataset.semester;
+      form.section.value = button.dataset.section;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+{% endblock %}

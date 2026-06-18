@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Fees - Student Database Management{% endblock %}
+{% block content %}
+  <div class="card">
+    <h2>Create or collect a fee</h2>
+    <form class="grid-form" id="fee-form">
+      <label>Student ID
+        <select name="student_id" required>
+          <option value="" disabled selected>Choose a student</option>
+          {% for sid in student_choices %}
+            <option value="{{ sid }}">{{ sid }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Amount
+        <input type="number" name="amount" min="0" step="0.01" required>
+      </label>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-accent" formaction="{{ url_for('create_fee') }}" formmethod="post">Create fee record</button>
+        <button type="submit" class="btn btn-accent" formaction="{{ url_for('collect_fee') }}" formmethod="post">Collect payment</button>
+      </div>
+    </form>
+    <p class="hint">Create sets the total amount due. Collect adds a payment toward the existing record.</p>
+  </div>
+
+  <div class="card">
+    <h2>Fee records</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Student ID</th><th>Amount</th><th>Paid</th><th>Due</th><th>Status</th></tr></thead>
+        <tbody>
+          {% for fee in fees.values() %}
+          <tr>
+            <td>{{ fee.student_id }}</td>
+            <td>{{ "%.2f"|format(fee.amount) }}</td>
+            <td>{{ "%.2f"|format(fee.paid_amount) }}</td>
+            <td>{{ "%.2f"|format(fee.due_amount()) }}</td>
+            <td>{{ fee.payment_status }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="5" class="empty">No fee records yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

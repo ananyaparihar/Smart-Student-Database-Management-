@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Exams - Student Database Management{% endblock %}
+{% block content %}
+  <div class="card">
+    <h2>Schedule an exam</h2>
+    <form class="grid-form" method="post" action="{{ url_for('schedule_exam') }}">
+      <label>Exam ID
+        <input type="text" name="exam_id" required>
+      </label>
+      <label>Exam name
+        <input type="text" name="exam_name" required>
+      </label>
+      <label>Date
+        <input type="date" name="date" required>
+      </label>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-accent">Schedule exam</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Scheduled exams</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Exam ID</th><th>Exam name</th><th>Date</th></tr></thead>
+        <tbody>
+          {% for exam in exams %}
+          <tr>
+            <td>{{ exam.exam_id }}</td>
+            <td>{{ exam.exam_name }}</td>
+            <td>{{ exam.date }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="3" class="empty">No exams scheduled yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

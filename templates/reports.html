@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Reports - Student Database Management{% endblock %}
+{% block content %}
+  <div class="card">
+    <h2>Download a report</h2>
+    <div class="report-grid">
+      {% for report_type in ["student", "attendance", "fee", "result", "performance"] %}
+        <div class="report-tile">
+          <span class="report-tile-label">{{ report_type|capitalize }}</span>
+          <div class="report-tile-actions">
+            <a class="btn btn-accent btn-small" href="{{ url_for('download_json_report', report_type=report_type) }}">JSON</a>
+            <a class="btn btn-outline btn-small" href="{{ url_for('download_csv_report', report_type=report_type) }}">CSV</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Look up a student report</h2>
+    <form class="grid-form" method="get" action="{{ url_for('reports') }}">
+      <label>Student ID
+        <input type="text" name="student_id" value="{{ requested_id }}" required>
+      </label>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-accent">View student report</button>
+      </div>
+    </form>
+
+    {% if student_report %}
+      {% set student = student_report.student %}
+      {% set attendance = student_report.attendance %}
+      {% set fee = student_report.fee %}
+      <div class="report-output">
+        <h3>Student details</h3>
+        <table class="kv-table">
+          <tr><th>Name</th><td>{{ student.name }}</td></tr>
+          <tr><th>Email</th><td>{{ student.email }}</td></tr>
+          <tr><th>Mobile</th><td>{{ student.mobile_number }}</td></tr>
+          <tr><th>Course</th><td>{{ student.course }}</td></tr>
+          <tr><th>Semester</th><td>{{ student.semester }}</td></tr>
+          <tr><th>Attendance</th><td>{{ "%.2f"|format(student.attendance) }}%</td></tr>
+          <tr><th>GPA</th><td>{{ "%.2f"|format(student.gpa) }}</td></tr>
+          <tr><th>Fee status</th><td>{{ student.fee_status }}</td></tr>
+        </table>
+
+        <h3>Attendance record</h3>
+        {% if attendance %}
+          <table class="kv-table">
+            <tr><th>Attended</th><td>{{ attendance.attended_classes }}</td></tr>
+            <tr><th>Total</th><td>{{ attendance.total_classes }}</td></tr>
+            <tr><th>Percentage</th><td>{{ "%.2f"|format(attendance.attendance_percentage) }}%</td></tr>
+          </table>
+        {% else %}
+          <p class="empty">No attendance record available.</p>
+        {% endif %}
+
+        <h3>Results</h3>
+        {% if student_report.results %}
+          <table>
+            <thead><tr><th>Subject</th><th>Marks</th><th>Grade</th><th>Exam ID</th></tr></thead>
+            <tbody>
+              {% for result in student_report.results %}
+              <tr>
+                <td>{{ result.subject }}</td>
+                <td>{{ "%.2f"|format(result.marks) }}</td>
+                <td>{{ result.grade }}</td>
+                <td>{{ result.exam_id }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p class="empty">No results recorded.</p>
+        {% endif %}
+
+        <h3>Fee summary</h3>
+        {% if fee %}
+          <table class="kv-table">
+            <tr><th>Amount</th><td>{{ fee.amount }}</td></tr>
+            <tr><th>Paid</th><td>{{ fee.paid_amount }}</td></tr>
+            <tr><th>Status</th><td>{{ fee.payment_status }}</td></tr>
+            <tr><th>Payment date</th><td>{{ fee.payment_date or "N/A" }}</td></tr>
+          </table>
+        {% else %}
+          <p class="empty">No fee record available.</p>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

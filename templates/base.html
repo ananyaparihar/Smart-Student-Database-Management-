@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Student Database Management{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <div>
+        <h1>Student Database Management</h1>
+        <p class="subtitle">An intelligent academic dashboard for students, attendance, fees and reports.</p>
+      </div>
+    </header>
+
+    <section class="summary-row">
+      <div class="summary-card">
+        <span class="summary-label">📚 Total Students</span>
+        <span class="summary-value">{{ summary_total }}</span>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">⭐ Top GPA</span>
+        <span class="summary-value">{{ "%.2f"|format(summary_top_gpa) }}</span>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">⏱️ Low Attendance</span>
+        <span class="summary-value">{{ summary_low_attendance }}</span>
+      </div>
+      <div class="summary-card">
+        <span class="summary-label">💰 Pending Fees</span>
+        <span class="summary-value">{{ summary_fees_due }}</span>
+      </div>
+    </section>
+
+    <nav class="tabs">
+      <a href="{{ url_for('dashboard') }}" class="tab {{ 'active' if request.path == url_for('dashboard') else '' }}">Students</a>
+      <a href="{{ url_for('attendance') }}" class="tab {{ 'active' if request.path == url_for('attendance') else '' }}">Attendance</a>
+      <a href="{{ url_for('fees') }}" class="tab {{ 'active' if request.path == url_for('fees') else '' }}">Fees</a>
+      <a href="{{ url_for('exams') }}" class="tab {{ 'active' if request.path == url_for('exams') else '' }}">Exams</a>
+      <a href="{{ url_for('results') }}" class="tab {{ 'active' if request.path == url_for('results') else '' }}">Results</a>
+      <a href="{{ url_for('performance') }}" class="tab {{ 'active' if request.path == url_for('performance') else '' }}">Performance</a>
+      <a href="{{ url_for('reports') }}" class="tab {{ 'active' if request.path == url_for('reports') else '' }}">Reports</a>
+      <a href="{{ url_for('notifications') }}" class="tab {{ 'active' if request.path == url_for('notifications') else '' }}">Notifications</a>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-stack">
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <main class="content">
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+      <span>Web edition of the Student Database Management System.</span>
+    </footer>
+  </div>
+</body>
+</html>
